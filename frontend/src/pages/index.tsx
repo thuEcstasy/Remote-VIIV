@@ -1,26 +1,27 @@
 import { useState } from "react";
-import { BACKEND_URL, FAILURE_PREFIX, LOGIN_FAILED, LOGIN_SUCCESS_PREFIX } from "../constants/string";
 import { useRouter } from "next/router";
-import { setName, setToken, setEmail, setPhone, setAvatar, setId } from "../redux/auth";
-import { useDispatch } from "react-redux";
-import { message } from "antd";
-import { NetworkError, NetworkErrorType, request } from "../utils/network";
-import styles from "../styles/LoginPage.module.css";
 
-const LoginScreen = () => {
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-
+const IndexPage = () => {
+    const [number, setNumber] = useState<string>(""); // 用于存储输入的数字
     const router = useRouter();
-    const dispatch = useDispatch();
 
-    const login = () => {
-        if (userName === "" || password === "") {
-            message.error("用户名和密码不能为空");
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNumber(e.target.value);
+    };
+
+    const handleLogin = () => {
+        // 示例用户名和密码
+        const userName = "testUser";  
+        const password = "testPass";  
+
+        // 输入验证：检查是否为1到6之间的数字
+        if (number === "" || isNaN(Number(number)) || Number(number) < 1 || Number(number) > 6) {
+            alert("请输入一个有效的1-6之间的数字");
             return;
         }
-        fetch(`${BACKEND_URL}/api/author/login`, {
+
+        // 发送请求到后端进行登录
+        fetch("/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,57 +34,43 @@ const LoginScreen = () => {
             .then((res) => res.json())
             .then((res) => {
                 if (Number(res.code) === 0) {
-                    dispatch(setName(userName));
-                    dispatch(setToken(res.token));
-                    dispatch(setEmail(res.data.email));
-                    console.log("email:" + res.email);
-                    dispatch(setPhone(res.data.phone_number));
-                    dispatch(setAvatar(res.data.avatar));
-                    dispatch(setId(res.data.id));
-                    message.success(LOGIN_SUCCESS_PREFIX + userName);
+                    // 登录成功，跳转到主页面
+                    alert("登录成功: " + userName);
                     router.push("/main");
-                }
-                else {
-                    message.error("登录失败: " + res.info);
+                } else {
+                    alert("登录失败: " + res.info);
                 }
             })
-            .catch((err) => alert(FAILURE_PREFIX + err));
+            .catch((err) => alert("请求失败: " + err));
     };
 
     return (
-        <div className={styles.container}>
-            <h2>Login</h2>
-            <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-                <div className={styles.group}>
-                    <label htmlFor="username">Username:</label><br />
-                    <input
-                        type="text"
-                        id="username"
-                        className={styles.control}
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                    />
-                </div>
-                <div className={styles.group}>
-                    <label htmlFor="password">Password:</label><br />
-                    <input
-                        type="password"
-                        id="password"
-                        className={styles.control}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div><br />
-                {errorMessage && <div className={styles.error}>{errorMessage}</div>}
-                <button className={`${styles.btn} ${styles.btnp}`} onClick={login}>
-                    Login
-                </button><br />
-                <button className={`${styles.btn}`} onClick={() => router.push("/register")}>
-                    Register
-                </button>
-            </form>
+        <div style={{ padding: "20px", textAlign: "center" }}>
+            <h1>输入座位号：1-6</h1>
+            <input
+                type="number"
+                value={number}
+                onChange={handleChange}
+                style={{ width: "200px", padding: "8px", fontSize: "16px", marginBottom: "10px" }}
+            />
+            <br />
+            <button
+                onClick={handleLogin}
+                style={{
+                    padding: "10px 20px",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    marginTop: "10px",
+                    backgroundColor: "#007BFF",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                }}
+            >
+                Start VIIV!
+            </button>
         </div>
     );
 };
 
-export default LoginScreen;
+export default IndexPage;

@@ -1,0 +1,7 @@
+[run]
+include =
+    author/views.py
+    friends/views.py
+    group/views.py
+    communication/views.py
+    communication/consumer.py

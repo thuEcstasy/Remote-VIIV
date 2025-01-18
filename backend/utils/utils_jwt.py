@@ -9,6 +9,7 @@ from typing import Optional
 # c.f. https://thuse-course.github.io/course-index/basic/jwt/#jwt
 # !Important! Change this to your own salt, better randomly generated!"
 SALT = ("KawaiiNana" + datetime.datetime.now().strftime("%Y%m%d%H%M")).encode("utf-8")
+# SALT = b"KawaiiNanaFixedSalt"
 EXPIRE_IN_SECONDS = 60 * 60 * 24 * 1  # 1 day
 ALT_CHARS = "-_".encode("utf-8")
 
@@ -70,7 +71,6 @@ def check_jwt_token(token: str) -> Optional[dict]:
     signature_str_check = header_b64 + "." + payload_b64
     signature_check = hmac.new(SALT, signature_str_check.encode("utf-8"), digestmod=hashlib.sha256).digest()
     signature_b64_check = b64url_encode(signature_check)
-    
     if signature_b64_check != signature_b64:
         return None
     

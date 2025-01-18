@@ -22,7 +22,7 @@ unit-test:
   before_script:
     - pip install -r requirements.txt
   script:
-    - python manage.py makemigrations board
+    - python manage.py makemigrations 
     - python manage.py migrate
     - ./test.sh
   after_script:

@@ -4,7 +4,7 @@ from utils.utils_request import request_failed
 
 MAX_CHAR_LENGTH = 255
 
-# A decorator function for processing `require` in view function.
+
 def CheckRequire(check_fn):
     @wraps(check_fn)
     def decorated(*args, **kwargs):
@@ -17,8 +17,7 @@ def CheckRequire(check_fn):
     return decorated
 
 
-# Here err_code == -2 denotes "Error in request body"
-# And err_code == -1 denotes "Error in request URL parsing"
+
 def require(body, key, type="string", err_msg=None, err_code=-2):
     
     if key not in body.keys():

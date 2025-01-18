@@ -2,6 +2,7 @@
   "name": "conway-game",
   "version": "0.1.0",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -48,7 +49,7 @@
     "web-vitals": "^4.2.3"
   },
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
-  "main": "jest.config.js",
+  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC"

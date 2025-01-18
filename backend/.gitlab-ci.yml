@@ -1,0 +1,39 @@
+image: registry.secoder.net/tool/deployer
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - export BUILD_IMAGE_NAME=$CI_REGISTRY_IMAGE
+    - export BUILD_IMAGE_TAG=$CI_COMMIT_REF_SLUG
+    - export BUILD_IMAGE_USERNAME=$CI_REGISTRY_USER
+    - export BUILD_IMAGE_PASSWORD=$CI_REGISTRY_PASSWORD
+    - deployer build
+  only:
+    - master
+
+unit-test:
+  image: python:3.9
+  stage: test
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - python manage.py makemigrations board
+    - python manage.py migrate
+    - ./test.sh
+  after_script:
+    - SUFFIX=$RANDOM
+    - curl "http://api.secoder.net/static/sonar-scanner.tar.gz" -s -o "/tmp/sonar-$SUFFIX.tar.gz"
+    - tar -xf "/tmp/sonar-$SUFFIX.tar.gz"  -C /opt
+    - /opt/sonar-scanner/bin/sonar-scanner
+
+deploy:
+  stage: deploy
+  script:
+    - deployer dyno replace $CI_PROJECT_NAME "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
+  only:
+    - master

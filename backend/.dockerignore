@@ -1,0 +1,14 @@
+README.md
+.git
+.gitignore
+
+**/__pycache__
+.pytest_cache
+**/migrations
+db.sqlite3
+
+.coverage
+coverage-reports
+xunit-reports
+
+.DS_Store

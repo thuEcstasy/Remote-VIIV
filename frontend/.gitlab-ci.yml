@@ -1,0 +1,29 @@
+image: registry.secoder.net/tool/deployer
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script: 
+    - export BUILD_IMAGE_NAME=$CI_REGISTRY_IMAGE
+    - export BUILD_IMAGE_TAG=$CI_COMMIT_REF_SLUG
+    - export BUILD_IMAGE_USERNAME=$CI_REGISTRY_USER
+    - export BUILD_IMAGE_PASSWORD=$CI_REGISTRY_PASSWORD
+    - deployer build
+  only:
+    - main
+
+# TODO Start: [Student] Complete test stage
+
+# TODO End
+
+deploy:
+  stage: deploy
+  script:
+    - export DEPLOY_ENV=$GITLAB_USER_LOGIN
+    - deployer dyno replace frontend $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG gitlab-ci-token $REGISTRY_PWD
+  only:
+    - main

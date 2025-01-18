@@ -1,0 +1,11 @@
+django==4.1.3
+# uwsgi  # Please uncomment this line when you try to deploy the project onto SECoder.
+# Generally, when you get sudo permission in Unix systems, `pip install uwsgi` works, otherwise `conda install uwsgi` is recommended.
+
+django-cors-headers
+# pymysql
+# mysqlclient==2.1.0
+
+pytest
+pytest-django
+coverage

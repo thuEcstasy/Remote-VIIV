@@ -1,7 +1,7 @@
 from django.utils.deprecation import MiddlewareMixin
 from author.models import User
 from asgiref.sync import sync_to_async
-from DjangoHW.constants import OFFLINE
+from VIIV.constants import OFFLINE
 
 class ResetUserStatusMiddleware(MiddlewareMixin):
     _has_reset = False

@@ -74,3 +74,9 @@ yarn dev
 It will start up development server at http://127.0.0.1:3000/.
 
 Open your browser and enter http://localhost:3000 (replace the port number if the default port is occupied) in the address bar to access the frontend page.
+
+
+## Current Development Progress
+
+Login Page: VIIV(backend), index.tsx(frontend)
+Main Page: main(backend), room.tsx(frontend) 

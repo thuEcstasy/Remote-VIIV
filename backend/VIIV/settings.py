@@ -47,12 +47,14 @@ INSTALLED_APPS = [
     'communication',
     'author',
     'friends',
+    'main',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders', # enable CORS
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -74,6 +76,7 @@ EMAIL_HOST_PASSWORD = 'uspj ubbi asfj mtyw'
 EMAIL_USE_SSL = False
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 必须放在最前面
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -112,19 +115,34 @@ WSGI_APPLICATION = 'VIIV.wsgi.application'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DATABASES={
+# DATABASES={
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': '7encent',
+#         'USER': 'root',
+#         'PASSWORD': 'kyrie0925',
+#         'HOST': '127.0.0.1',  # 通常是'localhost'或者是数据库服务器的IP 地址
+#         'PORT': '3306',  # MySQL的默认端口是3306
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#         },
+#     }
+# }
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '7encent',
-        'USER': 'root',
-        'PASSWORD': 'kyrie0925',
-        'HOST': '183.172.211.200',  # 通常是'localhost'或者是数据库服务器的IP 地址
-        'PORT': '3306',  # MySQL的默认端口是3306
+        'NAME': 'your_database_name',  # 替换为你创建的数据库名
+        'USER': 'your_user',          # 替换为你设置的 MySQL 用户名
+        'PASSWORD': 'your_password',  # 替换为对应的密码
+        'HOST': '127.0.0.1',          # WSL 中通常使用本地地址
+        'PORT': '3306',               # MySQL 默认端口
         'OPTIONS': {
-            'charset': 'utf8mb4',
+            'charset': 'utf8mb4',     # 推荐使用 utf8mb4 字符集
         },
     }
 }
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -166,3 +184,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+APPEND_SLASH = False

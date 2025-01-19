@@ -1,6 +1,6 @@
 from django.db import models
 from author.models import User
-from DjangoHW.constants import DEFAULT_AVATAR_BASE64
+from VIIV.constants import DEFAULT_AVATAR_BASE64
 
 class ChatRoom(models.Model):
     GROUP = 'group'

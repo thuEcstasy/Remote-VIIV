@@ -14,7 +14,6 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from main.consumers import MyConsumer
 from django.urls import path  # 导入 path
-import communication.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'VIIV.settings')
 

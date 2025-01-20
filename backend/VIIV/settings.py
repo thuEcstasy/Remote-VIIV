@@ -42,11 +42,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 20971520
 # Application definition
 
 INSTALLED_APPS = [
-    'group',
     'daphne',
-    'communication',
-    'author',
-    'friends',
     'main',
     'django.contrib.admin',
     'django.contrib.auth',

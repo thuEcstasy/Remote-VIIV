@@ -8,9 +8,3 @@ xunit-reports/
 .DS_Store
 .pytest_cache
 .env
-
-chatgpt.txt
-/media/
-/staticfiles/
-
-unupload.md

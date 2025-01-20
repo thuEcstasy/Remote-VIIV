@@ -6,12 +6,10 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import authReducer from "./auth";
-import boardReducer from "./board";
 
 // 合并多个 reducer
 const rootReducer = combineReducers({
     auth: authReducer,
-    board: boardReducer,
 });
 
 // 配置持久化

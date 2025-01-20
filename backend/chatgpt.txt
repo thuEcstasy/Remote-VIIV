@@ -1,0 +1,165 @@
+邮箱绑定：
+class EmailVerification(models.Model):
+    email = models.EmailField(unique=True)
+    verification_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+@require_http_methods(["POST"])
+def bind_email(request):
+    email = request.POST.get('email')
+    
+    if not email:
+        return JsonResponse({'error': 'Email is required.'}, status=400)
+    
+    # 生成验证码
+    verification_code = str(random.randint(100000, 999999))
+    
+    # 发送验证码到指定邮箱
+    send_mail(
+        'Your Email Verification Code',
+        f'Your verification code is: {verification_code}.',
+        'from@example.com',  # 发件人
+        [email],  # 收件人列表
+        fail_silently=False,
+    )
+    
+    EmailVerification.objects.update_or_create(
+        email=email,
+        defaults={'verification_code': verification_code}
+    )
+    
+    return JsonResponse({'success': 'Verification code sent successfully.'})
+
+@require_http_methods(["POST"])
+def verify_email(request):
+    email = request.POST.get('email')
+    user_code = request.POST.get('verification_code')
+    
+    if not email or not user_code:
+        return JsonResponse({'error': 'Email and verification code are required.'}, status=400)
+
+    try:
+        # 假设我们设置验证码有效期为10分钟
+        verification = EmailVerification.objects.get(email=email, verification_code=user_code, created_at__gte=timezone.now() - timedelta(minutes=10))
+    except EmailVerification.DoesNotExist:
+        return JsonResponse({'error': 'Invalid verification code or expired.'}, status=400)
+
+    # 在这里执行邮箱绑定逻辑，例如更新用户模型
+    # User.objects.filter(email=email).update(is_email_verified=True)
+
+    return JsonResponse({'success': 'Email verified and bound successfully.'})
+
+使用一个验证邮箱的库：email_validator
+from email_validator import validate_email, EmailNotValidError
+
+email = "user@example.com"
+
+try:
+    # 验证电子邮件并获取清理后的电子邮件
+    v = validate_email(email)
+    clean_email = v["email"]
+    # 如果你想检查域名是否存在，可以在这里做
+    domain_exists = v["domain"]
+except EmailNotValidError as e:
+    # 电子邮件不合法
+    print(str(e))
+
+
+## websocket
+# your_app/consumers.py
+import json
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
+from .models import Message
+
+User = get_user_model()
+
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user = self.scope["user"]
+        self.other_user = self.scope['url_route']['kwargs']['username']
+        self.room_group_name = f'chat_{self.user}_{self.other_user}'
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        message = data['message']
+        await self.save_message(message)
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
+
+    async def chat_message(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+
+    @database_sync_to_async
+    def save_message(self, message):
+        Message.objects.create(
+            sender=self.user,
+            receiver=User.objects.get(username=self.other_user),
+            content=message,
+            is_read=False
+        )
+class ChatConsumer(WebsocketConsumer):
+    def connect(self):
+        self.user = None
+        query_string = self.scope['query_string'].decode('utf-8')
+        token = query_string.split('=')[1] if 'token=' in query_string else None
+
+        if token:
+            try:
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+                user_id = payload.get('user_id')
+                # 假设你有方法根据 user_id 获取用户实例
+                self.user = get_user(user_id)
+            except jwt.ExpiredSignatureError:
+                self.close(code=4001)  # Token过期
+            except jwt.InvalidTokenError:
+                self.close(code=4002)  # 无效Token
+
+        if self.user:
+            self.accept()
+        else:
+            self.close(code=4000)  # 未认证或认证失败
+
+connect方法：当一个WebSocket连接请求到达时，connect方法被调用。这是建立WebSocket连接的起点。
+
+self：在Python类中，self引用的是类的实例本身。在这个上下文中，self用于访问类实例的属性和方法。
+
+self.user：这里self.user表示尝试建立WebSocket连接的用户实例。在Django Channels中，scope是一个字典，包含了关于当前连接的所有信息，比如认证信息、路径信息等。self.scope["user"]从这个字典中提取了当前经过认证的用户实例。如果用户已经通过认证（比如通过Django的会话认证），则此用户实例会是一个User模型的实例；否则，它可能是一个匿名用户。
+
+self.scope：self.scope包含了连接的所有上下文信息，例如路径参数、查询字符串、头信息等。在这段代码中，它被用来获取URL路由参数中的username。
+
+如果User模型是完全自定义的：即使User模型不是继承自django.contrib.auth.models.AbstractUser，只要你的自定义用户模型实现了Django认证框架所需的基本接口和字段（比如is_authenticated属性），你仍然可以使用self.scope["user"]。你需要确保在settings.py中通过AUTH_USER_MODEL指定你的自定义用户模型。
+
+self.channel_layer.group_add：这个方法用于将当前WebSocket连接（频道）添加到一个组中。WebSocket组是Channels的一个概念，允许你将多个连接归入同一个组，并向整个组广播消息。这里，self.room_group_name定义了组的名称，它基于当前用户和目标用户的用户名，确保每对聊天用户都有唯一的组。self.channel_name是当前WebSocket连接的唯一标识符。
+
+self.accept()：这个方法接受WebSocket连接。在connect方法的最后调用self.accept()表示服务器同意建立WebSocket连接。如果不调用self.accept()，连接将被拒绝。
+
+self.channel_layer.group_add 和 self.accept()
+self.channel_layer：这是Channels提供的一个接口，用于跨不同的消费者实例发送和接收消息。group_add是将当前的WebSocket连接（频道）添加到一个名为self.room_group_name的组里，使得后续可以向这个组广播消息。
+
+self.accept()：此方法用于正式接受WebSocket连接。只有在调用self.accept()之后，服务器和客户端之间才能互相发送和接收消息。如果在connect方法结束时不调用self.accept()，连接将不会被建立，客户端将收到一个连接失败的响应。
+
+综上所述，这段代码展示了如何在Django Channels中处理WebSocket连接，如何根据用户信息创建聊天组，以及如何接受WebSocket连接。无论User模型是否完全自定义，只要正确设置了AUTH_USER_MODEL并且自定义用户模型遵守Django认证框架的要求，这段代码都是适用的

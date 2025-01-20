@@ -19,9 +19,5 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('author/', include("author.urls")),
-    path('friends/',include("friends.urls")),
-    path('group/',include("group.urls")),
-    path('communication/',include('communication.urls')),
     path('main/', include("main.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

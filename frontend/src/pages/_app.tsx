@@ -1,5 +1,4 @@
 import Head from "next/head";
-import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import store, { RootState } from "../redux/store";
 import { resetAuth } from "../redux/auth";
@@ -15,7 +14,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     return (
         <>
             <Head>
-                <title> 7encent Chat</title>
+                <title> VIIV</title>
             </Head>
             <div style={{ padding: 12, justifyContent: "center" }}>
                 <Component {...pageProps} />

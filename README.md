@@ -67,9 +67,9 @@ python manage.py runserver
 ```
 It will start up development server at http://127.0.0.1:8000/.
 
-Access http://localhost:8000/startup to check if the server has started successfully. If it is running properly, you will see a webpage containing the message: "Congratulations! You have successfully installed the requirements. Go ahead!"
+Access http://localhost:8000/main/1 to check if the server has started successfully. If it is running properly, you will see a webpage containing the message: {"status": "error", "message": "Only POST requests are allowed"}
 
-2. Frontend
+1. Frontend
 
 Create a new terminal page, and run:
 ```

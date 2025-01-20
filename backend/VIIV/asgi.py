@@ -12,15 +12,18 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
+from main.consumers import MyConsumer
+from django.urls import path  # 导入 path
 import communication.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'VIIV.settings')
 
 application = ProtocolTypeRouter({
   "http": get_asgi_application(),
-  "websocket": AuthMiddlewareStack(
-        URLRouter(
-            communication.routing.websocket_urlpatterns
-        )
+    "websocket": AuthMiddlewareStack(
+        URLRouter([
+            # 定义 WebSocket URL 路由
+            path("ws/game", MyConsumer.as_asgi()),
+        ])
     ),
 })

@@ -1,0 +1,99 @@
+/* Room.css */
+.room {
+    display: grid;
+    grid-template-areas:
+      ". top-left top top-right ."
+      "left . . . right"
+      ". . bottom . .";
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background-color: #f0f0f0;
+  }
+  
+  .player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 10px;
+  }
+  
+  .player-info {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .player.ready {
+    background-color: #d4f8e8;
+  }
+  
+  .player.not-ready {
+    background-color: #ffe8e8;
+  }
+  
+  .cards {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .card {
+    width: 30px;
+    height: 45px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 45px;
+    font-size: 14px;
+    background-color: #ddd;
+  }
+  
+  /* Position styles */
+  .bottom {
+    grid-area: bottom;
+  }
+  
+  .left {
+    grid-area: left;
+  }
+  
+  .top-left {
+    grid-area: top-left;
+  }
+  
+  .top {
+    grid-area: top;
+  }
+  
+  .top-right {
+    grid-area: top-right;
+  }
+  
+  .right {
+    grid-area: right;
+  }
+  
+  /* Ready button */
+  .ready-button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .ready-button:hover {
+    background-color: #0056b3;
+  }
+  

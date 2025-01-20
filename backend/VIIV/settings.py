@@ -55,17 +55,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders', # enable CORS
+    'channels', # enable channels
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 # channel settings
 ASGI_APPLICATION = 'VIIV.asgi.application'
 
+# settings.py
+
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
 }
+
 # 邮件发送的设置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
